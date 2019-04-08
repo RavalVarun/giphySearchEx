@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Api Ajax Giphy</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    img {
+      width: 100%;
+    }
+
+    div {
+      width: 25%;
+    }
+
+    section {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  
+  <h1>Giphy finder</h1>
+  
+  <form>
+    <label for="search">Search</label>
+    <input type="text" id="search" autofocus>
+    <input type="submit">
+
+  </form>
+  <section>
+
+  </section>
+
+  <p>Disclaimer : This is an exercise i did at HackerYou, i know CSS would have made it cooler!</p>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+    
+    // get the value of the input on form submit
+    //using that value, request data from the API
+    //show information on the page
+    //user can serach again
+
+    const app = {};
+    app.key = `1C88jo707ottB8YgNuzjc1XJwBnz7E0N`;
+
+    app.displayGifs = (gifList) => {
+      $('section').empty();
+      gifList.forEach((gif) => {
+        console.log(gif.title);
+        const gifHTML = `<div>
+                            <h2>${gif.title}</h2>
+                            <img src=${gif.images.preview_gif.url} alt=${gif.title}/>
+                         </div>`;
+                            // <img src=${gif.images.orignal_still.url} alt=${gif.title}/>
+
+          $('section').append(gifHTML);
+      });
+    }
+
+    app.getGifs = (query) => {
+      $.ajax({
+        url:'http://api.giphy.com/v1/gifs/search',
+        method: 'GET',
+        dataType:'JSON',
+        data: {
+          api_key: app.key,
+          q: query
+        }
+      }).then((result) => {
+        console.log(result);
+        app.displayGifs(result.data);
+      })
+    }
+
+    app.init = () => {
+      console.log('ready');
+
+      $('form').on('submit', function(event) {
+        event.preventDefault();
+        const serachTerm = $('#search').val();
+        $('#search').val("");
+        console.log(serachTerm);
+        app.getGifs(serachTerm);
+      });      
+    }
+
+    $(function(){
+      app.init();
+    })
+  </script>
+</body>
+</html>
